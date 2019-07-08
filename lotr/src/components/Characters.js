@@ -3,6 +3,7 @@ import axios from "axios";
 
 const Characters = () => {
   const [chars, setChars] = useState([]);
+
   const getChars = () => {
     axios
       .get("http://localhost:3000/api/users")
@@ -13,12 +14,21 @@ const Characters = () => {
       .catch(err => err);
   };
 
+  const deleteChar = id => {
+    axios
+      .delete(`http://localhost:3000/api/users/${id}`)
+      .then(res => getChars())
+      .catch(err => err);
+  };
+
   useEffect(getChars, []);
 
   return (
     <div>
       {chars.map(char => (
-        <div key={char.id}>{char.name}</div>
+        <div key={char.id}>
+          {char.name} <span onClick={() => deleteChar(char.id)}>&#10006;</span>
+        </div>
       ))}
     </div>
   );
