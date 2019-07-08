@@ -20,6 +20,17 @@ server.get('/api/users', (req, res) => {
     })
 })
 
+server.get('/api/users/:id', (req, res) => {
+    const {id} = req.params
+    Users.findById(id)
+    .then(user => {
+        res.status(200).json(user)
+    })
+    .catch(err => {
+        res.status(404).json(err)
+    })
+})
+
 server.listen(3000, () => {
     console.log('listening on 3000');
   })
