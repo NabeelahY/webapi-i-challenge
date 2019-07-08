@@ -8,6 +8,8 @@ const Characters = () => {
     name: "",
     bio: ""
   });
+  
+  const [editing, setEdit] = useState(false);
 
   const getChars = () => {
     axios
@@ -15,19 +17,48 @@ const Characters = () => {
       .then(res => setChars(res.data))
       .catch(err => err);
   };
+  
+  const updateChars = id => {
+    if (id) {
+      setEdit(true);
+
+      const newChars = chars.find(char => char.id === id);
+
+      setNewChar({
+        id: newChars.id,
+        name: newChars.name,
+        bio: newChars.bio
+      });
+    }
+  };
 
   const addChars = e => {
     e.preventDefault();
-    axios
-      .post("http://localhost:3000/api/users", newChar)
-      .then(res => {
-        getChars();
-        setNewChar({
-          name: "",
-          bio: ""
-        });
-      })
-      .catch(err => err);
+
+    if (editing) {
+      axios
+        .put(`http://localhost:3000/api/users/${newChar.id}`, newChar)
+        .then(res => {
+          getChars();
+          setEdit(false);
+          setNewChar({
+            name: "",
+            bio: ""
+          });
+        })
+        .catch(err => err);
+    } else {
+      axios
+        .post("http://localhost:3000/api/users", newChar)
+        .then(res => {
+          getChars();
+          setNewChar({
+            name: "",
+            bio: ""
+          });
+        })
+        .catch(err => err);
+    }
   };
 
   const deleteChar = id => {
@@ -45,6 +76,7 @@ const Characters = () => {
       {chars.map(char => (
         <div key={char.id}>
           {char.name} <span onClick={() => deleteChar(char.id)}>&#10006;</span>
+          <button onClick={() => updateChars(char.id)}>Edit</button>
         </div>
       ))}
     </div>
