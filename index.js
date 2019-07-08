@@ -48,6 +48,24 @@ server.post("/api/users", (req, res) => {
     });
 });
 
+server.put("/api/users/:id", (req, res) => {
+  const { id } = req.params;
+  const { name, bio } = req.body;
+
+  const editUser = {
+    name: name,
+    bio: bio
+  };
+
+  Users.update(id, editUser)
+    .then(user => {
+      res.status(200).json(user);
+    })
+    .catch(err => {
+      res.status(404).json(err);
+    });
+});
+
 server.listen(3000, () => {
   console.log("listening on 3000");
 });
